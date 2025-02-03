@@ -1,0 +1,30 @@
+<h1 class="mt-4 mb-4">Lista de Estudantes</h1>
+<a href="/adicionar" class="btn btn-primary mb-4">Adicionar Estudante</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Idade</th>
+      <th>Email</th>
+      <th>Curso</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each estudantes}}
+      <tr>
+        <td>{{id}}</td>
+        <td>{{name}}</td>
+        <td>{{age}}</td>
+        <td>{{email}}</td>
+        <td>{{course}}</td>
+        <td>
+          <a href="/editar/{{id}}" class="btn btn-sm btn-warning">Editar</a>
+          <a href="/listar/{{id}}" class="btn btn-sm btn-info">Ver</a>
+          <a href="/delete/{{id}}" class="btn btn-sm btn-danger">Excluir</a>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
