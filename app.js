@@ -49,22 +49,26 @@ app.get('/editar/:id', async (req, res) => {
     const estudante = await selectEstudanteEspecifico(req.params.id);
     res.render('editar', { estudante });
   } catch (error) {
-    res.status(500).send('Erro ao carregar estudante');
+    res.status(500).send('Erro ao carregar estudante'+error);
   }
 });
 
 // Rota para processar o formulário de edição de estudante
 app.post('/editar/:id', async (req, res) => {
-    try {
-      // Passando o id corretamente
+  try {
+      console.log("Dados recebidos:", req.body);
       const estudanteAtualizado = { id: req.params.id, ...req.body };
+      console.log("Dados para atualização:", estudanteAtualizado);
+
       await updateEstudante(estudanteAtualizado);
-  
       res.redirect('/');
-    } catch (error) {
-      res.status(500).send('Erro ao atualizar estudante');
-    }
-  });
+  } catch (error) {
+      console.error("Erro ao atualizar estudante:", error.message);
+      res.status(500).send(`Erro ao atualizar estudante: ${error.message}`);
+  }
+});
+
+
 
 // Rota para visualizar detalhes de um estudante
 app.get('/listar/:id', async (req, res) => {
@@ -76,32 +80,35 @@ app.get('/listar/:id', async (req, res) => {
   }
 });
 
+app.use(express.json()); // Para lidar com dados JSON no corpo da requisição
+app.use(express.urlencoded({ extended: true })); // Para lidar com dados de formulários
 
-//delete
-app.delete('/excluir/:id', async (req, res) => {
-    const id = req.params.id; 
-    try {
-        const result = await deleteEstudanteEspecifico(id);
-        if (result.changes > 0) {
-            res.status(200).json({
-                statusCode: 200,
-                message: 'Estudante excluído.'
-            });
-        } else {
-            res.status(404).json({
-                statusCode: 404,
-                message: 'Estudante não encontrado.'
-            });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            statusCode: 500,
-            message: 'Erro ao excluir estudante.'
-        });
-    }
+// Middleware para garantir que o DELETE seja interpretado corretamente
+app.use((req, res, next) => {
+  if (req.method === 'DELETE') {
+    req.body = req.body || {};
+  }
+  next();
 });
 
+
+
+// Rota para excluir um estudante
+
+app.delete('/delete/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const result = await deleteEstudanteEspecifico(id);
+    if (result.changes > 0) {
+      res.status(200).json({ message: 'Estudante excluído com sucesso' });
+    } else {
+      res.status(404).json({ message: 'Estudante não encontrado' });
+    }
+  } catch (error) {
+    console.error('Erro ao excluir estudante:', error);
+    res.status(500).json({ message: 'Erro ao excluir estudante' });
+  }
+});
 
 
 // Rotas API (opcional)
@@ -132,6 +139,17 @@ app.delete('/api/estudanteEspecifico/:id', async (req, res) => {
   }
 });
 
+app.get('/curso/:course', async (req, res) => {
+  const { course } = req.params;
+  res.render('curso', { course, estudantes });
+  try {
+      const estudantes = await selectEstudantesPorCurso(course);
+   
+  } catch (error) {
+      console.error('Erro ao buscar alunos por curso:', error.message);
+      res.status(500).send('Erro ao buscar alunos por curso');
+  }
+});
 
 
 
