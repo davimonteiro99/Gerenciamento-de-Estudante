@@ -1,0 +1,52 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Idade</th>
+      <th scope="col">Email</th>
+      <th scope="col">Curso</th>
+      <th scope="col">Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each estudantes}}
+      <tr>
+        <td>{{this.id}}</td>
+        <td>{{this.nome}}</td>
+        <td>{{this.idade}}</td>
+        <td>{{this.email}}</td>
+        <td>{{this.course}}</td>
+        <td>
+          <!-- Botão para excluir estudante com confirmação -->
+          <button onclick="deleteEstudante({{this.id}})" class="btn btn-danger">Excluir</button>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<!-- Script para confirmação e exclusão -->
+<script>
+  function deleteEstudante(id) {
+    // Confirmar a exclusão
+    if (confirm('Tem certeza que deseja excluir este estudante?')) {
+      // Disparar a requisição DELETE
+      fetch(`/delete/${id}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Estudante excluído com sucesso!');
+          window.location.reload(); // Recarrega a página para atualizar a lista
+        } else {
+          alert('Erro ao excluir estudante.');
+        }
+      })
+      .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao excluir estudante.');
+      });
+    }
+  }
+</script>

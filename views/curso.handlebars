@@ -1,0 +1,26 @@
+<h1>Alunos do Curso: {{course}}</h1>
+
+{{#if estudantes.length}}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Idade</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each estudantes}}
+        <tr>
+          <td>{{id}}</td>
+          <td>{{name}}</td>
+          <td>{{age}}</td>
+          <td>{{email}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{else}}
+  <p>Nenhum aluno encontrado para o curso "{{course}}".</p>
+{{/if}}
