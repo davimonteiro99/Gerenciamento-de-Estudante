@@ -1,4 +1,20 @@
 <h1 class="mt-4 mb-4">Lista de Estudantes</h1>
+<!-- Formulário de busca por curso -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <form action="/curso" method="GET" class="d-flex">
+      <input
+        type="text"
+        name="course"
+        class="form-control me-2"
+        placeholder="Buscar por curso..."
+        required
+      />
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+  </div>
+</div>
+
 <a href="/adicionar" class="btn btn-primary mb-4">Adicionar Estudante</a>
 <table class="table table-striped">
   <thead>
@@ -22,9 +38,35 @@
         <td>
           <a href="/editar/{{id}}" class="btn btn-sm btn-warning">Editar</a>
           <a href="/listar/{{id}}" class="btn btn-sm btn-info">Ver</a>
-          <a href="/delete/{{id}}" class="btn btn-sm btn-danger">Excluir</a>
+          <a href="#" class="btn btn-sm btn-danger" onclick="excluirEstudante({{id}})">Excluir da face da terra</a>
+        </td>
+        <td>
+          <a href="/curso/{{course}}" class="btn btn-sm btn-secondary">Ver Curso</a>
         </td>
       </tr>
     {{/each}}
   </tbody>
 </table>
+
+<script>
+  function excluirEstudante(id) {
+    if (confirm("Tem certeza que deseja excluir este estudante?")) {
+      fetch(`/delete/${id}`, {
+        method: 'DELETE',
+      })
+        .then((response) => {
+          if (response.ok) {
+            alert("Estudante excluído com sucesso!");
+            window.location.reload(); // Recarrega a página após a exclusão
+          } else {
+            return response.json().then((data) => {
+              throw new Error(data.message || "Erro ao excluir estudante");
+            });
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  }
+</script>

@@ -31,8 +31,21 @@ export async function insertEstudante(aluno) {
 
 // Atualizar estudante
 export async function updateEstudante(aluno) {
-    const db = await openDb();
-    await db.run('UPDATE Estudantes SET name=?, age=?, email=?, course=? WHERE id=?', [aluno.name, aluno.age, aluno.email, aluno.course, aluno.id]);
+    try {
+        const db = await openDb();
+        console.log("Executando atualização para o ID:", aluno.id);
+        const result = await db.run(
+            'UPDATE Estudantes SET name=?, age=?, email=?, course=? WHERE id=?',
+            [aluno.name, aluno.age, aluno.email, aluno.course, aluno.id]
+        );
+        console.log("Resultado da atualização:", result);
+        if (result.changes === 0) {
+            throw new Error("Nenhuma linha foi atualizada. Verifique se o ID existe.");
+        }
+    } catch (error) {
+        console.error("Erro na função updateEstudante:", error.message);
+        throw error;
+    }
 }
 
 // Selecionar todos os estudantes
@@ -49,9 +62,23 @@ export async function selectEstudanteEspecifico(id) {
     return result;
 }
 
-// Deletar estudante específico
 export async function deleteEstudanteEspecifico(id) {
     const db = await openDb();
     const result = await db.run('DELETE FROM Estudantes WHERE id=?', [id]);
-    return result;
+    console.log('Resultado da exclusão:', result);  // Veja o que está retornando
+    return result; 
+  }
+
+  export async function selectEstudantesPorCurso(course) {
+    try {
+        const db = await openDb();
+        const result = await db.all(
+            'SELECT * FROM Estudantes WHERE course LIKE ?',
+            [`%${course}%`]
+        );
+        return result;
+    } catch (error) {
+        console.error("Erro ao buscar estudantes por curso:", error.message);
+        throw error;
+    }
 }
