@@ -69,16 +69,17 @@ export async function deleteEstudanteEspecifico(id) {
     return result; 
   }
 
-  export async function selectEstudantesPorCurso(course) {
+  export async function selectEstudantePorCurso(course) {
+    const db = await openDb();
+    const sql = 'SELECT * FROM estudantes WHERE course = ?';
+    const params = [course];
+  
     try {
-        const db = await openDb();
-        const result = await db.all(
-            'SELECT * FROM Estudantes WHERE course LIKE ?',
-            [`%${course}%`]
-        );
-        return result;
+      const estudantes = await db.all(sql, params);
+      return estudantes;
     } catch (error) {
-        console.error("Erro ao buscar estudantes por curso:", error.message);
-        throw error;
+      throw new Error('Erro ao buscar estudantes por curso'+error);
+    } finally {
+      await db.close();
     }
-}
+  }
